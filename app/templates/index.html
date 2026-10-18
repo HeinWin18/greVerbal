@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A focused workspace for GRE verbal preparation.">
+    <title>GRE Verbal | Preparation Guide &amp; Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="site-header">
+            <a class="brand" href="/">GRE <span>VERBAL</span></a>
+            <p class="course-label">PREPARATION GUIDE &amp; PLANNER</p>
+        </header>
+
+        <section class="intro" aria-labelledby="page-title">
+            <p class="eyebrow">A CLEARER WAY TO PREPARE</p>
+            <h1 id="page-title">Build your verbal confidence.</h1>
+            <p class="intro-copy">
+                Grow your vocabulary and practice GRE verbal questions, one focused session at a time.
+            </p>
+        </section>
+
+        <section class="study-options" aria-label="Study options">
+            <article class="study-card">
+                <p class="card-number">01</p>
+                <h2>Vocabulary</h2>
+                <p>Review useful words, clear definitions, and example sentences.</p>
+                <a class="study-button" href="{{ url_for('main.vocabulary') }}">Study Vocabulary</a>
+            </article>
+            <article class="study-card">
+                <p class="card-number">02</p>
+                <h2>Verbal practice</h2>
+                <p>Answer practice questions and learn from straightforward explanations.</p>
+                <a class="study-button" href="{{ url_for('main.practice') }}">Practice Verbal Questions</a>
+            </article>
+        </section>
+
+        <footer class="site-footer">A focused GRE verbal study space.</footer>
+    </main>
+</body>
+</html>

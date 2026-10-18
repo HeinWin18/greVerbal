@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vocabulary | GRE Verbal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="site-header">
+            <a class="brand" href="{{ url_for('main.home') }}">GRE <span>VERBAL</span></a>
+            <p class="course-label">WORD STUDY</p>
+        </header>
+
+        <section class="intro page-intro" aria-labelledby="page-title">
+            <p class="eyebrow">BUILD YOUR VOCABULARY</p>
+            <h1 id="page-title">Words worth knowing.</h1>
+            <p class="intro-copy">Review each definition in context and learn the word's difficulty.</p>
+        </section>
+
+        {% if database_error %}<p class="database-notice" role="status">{{ database_error }}</p>{% endif %}
+        {% if vocabulary %}
+        <section class="content-grid vocabulary-grid" aria-label="Vocabulary list">
+            {% for item in vocabulary %}
+            <article class="content-card">
+                <div class="word-heading">
+                    <h2>{{ item.word }}</h2>
+                    <span class="difficulty">{{ item.difficulty|default('Not rated') }}</span>
+                </div>
+                <p>{{ item.definition }}</p>
+                <p class="example"><strong>Example:</strong> {{ item.example }}</p>
+            </article>
+            {% endfor %}
+        </section>
+        {% elif not database_error %}
+        <p class="empty-state">No vocabulary entries yet. Run the seed script to add the study set.</p>
+        {% endif %}
+
+        <p class="back-link"><a href="{{ url_for('main.home') }}">← Back to home</a></p>
+    </main>
+</body>
+</html>

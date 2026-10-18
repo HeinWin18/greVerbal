@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verbal Practice | GRE Verbal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="site-header">
+            <a class="brand" href="{{ url_for('main.home') }}">GRE <span>VERBAL</span></a>
+            <p class="course-label">PRACTICE</p>
+        </header>
+
+        <section class="intro page-intro" aria-labelledby="page-title">
+            <p class="eyebrow">THINK IT THROUGH</p>
+            <h1 id="page-title">Verbal practice.</h1>
+            <p class="intro-copy">Choose your answer, submit it, and review the explanation.</p>
+        </section>
+
+        {% if database_error %}<p class="database-notice" role="status">{{ database_error }}</p>{% endif %}
+        {% if feedback and feedback.error %}
+        <p class="feedback feedback-error" role="alert">{{ feedback.error }}</p>
+        {% endif %}
+
+        {% if questions %}
+        <section aria-label="GRE verbal questions">
+            {% for question in questions %}
+            <article class="question-card" id="{{ question.question_id }}">
+                <p class="question-label">QUESTION {{ loop.index }}{% if question.type == 'sentence_equivalence' %} · SELECT TWO{% endif %}</p>
+                {% if question.passage %}<p class="passage">{{ question.passage }}</p>{% endif %}
+                <h2>{{ question.prompt }}</h2>
+                <form method="post" action="{{ url_for('main.practice') }}#{{ question.question_id }}">
+                    <input type="hidden" name="question_id" value="{{ question.question_id }}">
+                    <fieldset class="answer-options">
+                        <legend class="visually-hidden">
+                            {% if question.type == 'sentence_equivalence' %}Select two answers{% else %}Select one answer{% endif %}
+                        </legend>
+                        {% for choice in question.choices %}
+                        <label class="answer-choice">
+                            <input
+                                type="{% if question.type == 'sentence_equivalence' %}checkbox{% else %}radio{% endif %}"
+                                name="answer"
+                                value="{{ choice }}"
+                                {% if choice in selected_answers and feedback and feedback.question_id == question.question_id %}checked{% endif %}
+                            >
+                            <span>{{ choice }}</span>
+                        </label>
+                        {% endfor %}
+                    </fieldset>
+                    <button class="study-button submit-button" type="submit">Submit Answer</button>
+                </form>
+
+                {% if feedback and feedback.question_id == question.question_id and feedback.correct is defined %}
+                <div class="feedback {% if feedback.correct %}feedback-correct{% else %}feedback-incorrect{% endif %}" role="status">
+                    <h3>{% if feedback.correct %}Correct{% else %}Not quite{% endif %}</h3>
+                    {% if not feedback.correct %}
+                    <p><strong>Correct answer:</strong>
+                        {% if feedback.correct_answer is string %}{{ feedback.correct_answer }}{% else %}{{ feedback.correct_answer|join(', ') }}{% endif %}
+                    </p>
+                    {% endif %}
+                    <p>{{ feedback.explanation }}</p>
+                </div>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </section>
+        {% elif not database_error %}
+        <p class="empty-state">No practice questions yet. Run the seed script to add the question set.</p>
+        {% endif %}
+
+        <p class="back-link"><a href="{{ url_for('main.home') }}">← Back to home</a></p>
+    </main>
+</body>
+</html>
