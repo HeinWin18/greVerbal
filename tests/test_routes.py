@@ -47,6 +47,8 @@ class RouteTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Study Vocabulary", response.data)
         self.assertIn(b"Practice Verbal Questions", response.data)
+        self.assertIn(b'href="/vocabulary"', response.data)
+        self.assertIn(b'href="/practice"', response.data)
 
     @patch("app.routes.get_database")
     def test_vocabulary_page_displays_database_fields(self, get_database):
@@ -57,6 +59,46 @@ class RouteTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         for value in (b"abate", b"to become less intense", b"The storm began", b"Intermediate"):
             self.assertIn(value, response.data)
+
+    @patch("app.routes.get_database")
+    def test_empty_vocabulary_shows_helpful_state(self, get_database):
+        get_database.return_value = {
+            "vocabulary": FakeCollection([]),
+            "verbal_questions": FakeCollection([]),
+        }
+
+        response = self.client.get("/vocabulary")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"No vocabulary entries yet", response.data)
+
+    @patch("app.routes.get_database")
+    def test_empty_practice_shows_helpful_state(self, get_database):
+        get_database.return_value = {
+            "vocabulary": FakeCollection([]),
+            "verbal_questions": FakeCollection([]),
+        }
+
+        response = self.client.get("/practice")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"No practice questions yet", response.data)
+
+    @patch("app.routes.get_database")
+    def test_unanswered_submission_gets_helpful_message(self, get_database):
+        get_database.return_value = self.database
+
+        response = self.client.post("/practice", data={"question_id": "sample-01"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Choose an answer before submitting", response.data)
+
+    def test_stylesheet_is_served(self):
+        response = self.client.get("/static/css/style.css")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"prefers-reduced-motion", response.data)
+        response.close()
 
     @patch("app.routes.get_database")
     def test_practice_page_does_not_reveal_answer_before_submission(self, get_database):
@@ -110,10 +152,13 @@ class RouteTests(unittest.TestCase):
     def test_database_error_is_handled(self, get_database):
         get_database.side_effect = DatabaseConnectionError("database unavailable")
 
-        response = self.client.get("/api/verbal-questions")
+        with self.assertLogs(level="ERROR"):
+            response = self.client.get("/api/verbal-questions")
 
         self.assertEqual(response.status_code, 503)
         self.assertIn("error", response.get_json())
+        self.assertNotIn("database unavailable", response.get_json()["error"])
+        self.assertNotIn(b"Traceback", response.data)
 
 
 class AnswerCheckingTests(unittest.TestCase):

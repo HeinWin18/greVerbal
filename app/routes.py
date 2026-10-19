@@ -1,6 +1,6 @@
 """Page and JSON routes for the GRE Preparation Guide & Planner."""
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, render_template, request
 from pymongo.errors import PyMongoError
 
 from app.database import DatabaseError, get_database
@@ -89,7 +89,12 @@ def collection_response(collection_name, sort_key, hidden_fields=None):
                 document.pop(field, None)
         return jsonify(documents)
     except (DatabaseError, PyMongoError):
-        return jsonify({"error": "Study data is unavailable. Check your MongoDB settings and connection."}), 503
+        current_app.logger.exception(
+            "Failed to retrieve MongoDB collection '%s'.", collection_name
+        )
+        return jsonify({
+            "error": "Study data is unavailable. Check your MongoDB connection and try again."
+        }), 503
 
 
 def load_collection(collection_name, sort_key):
@@ -101,7 +106,10 @@ def load_collection(collection_name, sort_key):
         )
         return documents, None
     except (DatabaseError, PyMongoError):
-        return [], "Study data is unavailable. Check your MongoDB settings and connection."
+        current_app.logger.exception(
+            "Failed to load MongoDB collection '%s'.", collection_name
+        )
+        return [], "Study data is unavailable. Check your MongoDB connection and try again."
 
 
 def answer_is_correct(correct_answer, selected_answers):

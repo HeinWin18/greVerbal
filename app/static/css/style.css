@@ -5,6 +5,7 @@
     --accent: #176b63;
     --paper: #f7f8f5;
     --line: #dce3df;
+    --card-shadow: 0 8px 24px rgba(23, 43, 58, 0.06);
 }
 
 * {
@@ -96,9 +97,15 @@ h1 {
     background: #fff;
     border: 1px solid var(--line);
     border-radius: 12px;
+    box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    transition: box-shadow 140ms ease;
+}
+
+.study-card:hover {
+    box-shadow: 0 12px 30px rgba(23, 43, 58, 0.1);
 }
 
 .card-number {
@@ -159,14 +166,6 @@ h2 {
     color: #654218;
 }
 
-.content-section {
-    padding-top: 72px;
-}
-
-.content-section > .eyebrow {
-    margin-bottom: 8px;
-}
-
 .content-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -176,10 +175,13 @@ h2 {
 
 .content-card,
 .question-card {
+    min-width: 0;
     padding: 24px;
     background: #fff;
     border: 1px solid var(--line);
     border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    overflow-wrap: anywhere;
 }
 
 .content-card h3,
@@ -250,15 +252,6 @@ h2 {
     background: #f3f7f5;
 }
 
-.choices {
-    padding-left: 28px;
-    color: var(--muted);
-}
-
-.choices li {
-    padding: 3px 0 3px 6px;
-}
-
 .answer-options {
     display: grid;
     gap: 10px;
@@ -277,11 +270,12 @@ h2 {
     background: #fff;
     color: var(--ink);
     cursor: pointer;
+    overflow-wrap: anywhere;
 }
 
-.answer-choice:has(input:checked) {
-    border-color: var(--accent);
-    background: #f1f7f5;
+.answer-choice input:checked + span {
+    color: var(--accent);
+    font-weight: 700;
 }
 
 .answer-choice input {
@@ -353,10 +347,6 @@ h2 {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     clip-path: inset(50%);
-
-.question-card .answer,
-.question-card .explanation {
-    font-size: 16px;
 }
 
 .site-footer {
@@ -411,5 +401,16 @@ h2 {
 
     .study-button {
         width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
     }
 }
