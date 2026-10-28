@@ -2,6 +2,7 @@
 
 from app import create_app
 from app.database import DatabaseError, get_database, test_connection
+from app.question_bank import is_valid_question
 from pymongo.errors import PyMongoError
 
 
@@ -63,6 +64,16 @@ VERBAL_QUESTIONS = [
     },
 ]
 
+# These questions were written for this application. The section names describe
+# the question format and are not citations to an external book or website.
+for question in VERBAL_QUESTIONS:
+    question["source"] = {
+        "kind": "original",
+        "title": "GRE Verbal Prep original practice",
+        "section": question["type"].replace("_", " ").title(),
+        "url": None,
+    }
+
 
 def seed_collection(collection, documents, key_field, label):
     for document in documents:
@@ -74,6 +85,29 @@ def seed_collection(collection, documents, key_field, label):
     print(f"Seeded {len(documents)} {label} records without duplicating keys.")
 
 
+def seed_verbal_questions(collection, documents):
+    """Upsert valid, uniquely identified questions and skip bad imports."""
+    seen_ids = set()
+    seeded = 0
+    skipped = 0
+    for document in documents:
+        if not is_valid_question(document):
+            skipped += 1
+            continue
+        question_id = document["question_id"]
+        if question_id in seen_ids:
+            skipped += 1
+            continue
+        seen_ids.add(question_id)
+        collection.update_one(
+            {"question_id": question_id},
+            {"$set": document},
+            upsert=True,
+        )
+        seeded += 1
+    print(f"Seeded {seeded} verbal questions; skipped {skipped} invalid or duplicate records.")
+
+
 def main():
     app = create_app()
     with app.app_context():
@@ -81,11 +115,9 @@ def main():
             test_connection()
             database = get_database()
             seed_collection(database["vocabulary"], VOCABULARY, "word", "vocabulary")
-            seed_collection(
+            seed_verbal_questions(
                 database["verbal_questions"],
                 VERBAL_QUESTIONS,
-                "question_id",
-                "verbal questions",
             )
         except DatabaseError as exc:
             raise SystemExit(f"Seed failed: {exc}") from exc

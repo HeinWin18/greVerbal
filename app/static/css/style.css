@@ -158,6 +158,91 @@ h2 {
     outline-offset: 3px;
 }
 
+.session-launch {
+    margin-top: 24px;
+    padding: 30px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--card-shadow);
+}
+
+.session-launch .eyebrow {
+    margin-bottom: 12px;
+}
+
+.session-launch-button {
+    min-width: min(100%, 300px);
+    margin-top: 8px;
+}
+
+.session-content {
+    min-height: 180px;
+}
+
+.session-status {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.session-error {
+    padding: 14px 18px;
+    border-left: 4px solid #b87528;
+    background: #fff8ec;
+    color: #654218;
+}
+
+.session-question-card {
+    margin-top: 0;
+}
+
+.session-answer-form > .study-button,
+.feedback > .study-button,
+.session-summary > .study-button {
+    margin: 8px 12px 0 0;
+}
+
+.study-button:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.button-secondary {
+    border-color: var(--line);
+    background: #fff;
+    color: var(--ink);
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+    border-color: var(--accent);
+    background: #fff;
+    color: var(--accent);
+}
+
+.session-summary {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--card-shadow);
+}
+
+.session-summary h2 {
+    font-size: clamp(28px, 4vw, 36px);
+}
+
+.session-summary p {
+    color: var(--muted);
+}
+
+.session-summary .session-score {
+    color: var(--ink);
+    font-size: 24px;
+    font-weight: 700;
+}
+
 .database-notice {
     margin: 28px 0 0;
     padding: 16px 20px;
@@ -244,6 +329,16 @@ h2 {
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.1em;
+}
+
+.question-source {
+    margin: -8px 0 18px !important;
+    font-size: 14px;
+}
+
+.question-source a {
+    color: var(--accent);
+    font-weight: 700;
 }
 
 .question-card .passage {

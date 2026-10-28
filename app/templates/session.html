@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Study Session | GRE Verbal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="site-header">
+            <a class="brand" href="{{ url_for('main.home') }}">GRE <span>VERBAL</span></a>
+            <p class="course-label">FOCUSED STUDY SESSION</p>
+        </header>
+
+        <section class="intro page-intro" aria-labelledby="session-title">
+            <p class="eyebrow">ONE QUESTION AT A TIME</p>
+            <h1 id="session-title">Your study session.</h1>
+            <p class="intro-copy">Answer each question, then review your feedback and explanation.</p>
+        </section>
+
+        <section class="session-content" data-session-root
+            data-questions-url="{{ url_for('main.study_session_questions_api') }}"
+            data-answer-url="{{ url_for('main.study_session_answer_api') }}">
+            <p class="session-status" data-session-status role="status">Loading your questions…</p>
+            <div data-session-stage></div>
+        </section>
+
+        <p class="back-link"><a href="{{ url_for('main.home') }}">← Back to home</a></p>
+        <footer class="site-footer">A focused GRE verbal study space.</footer>
+    </main>
+    <script src="{{ url_for('static', filename='js/session_score.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/study_session.js') }}" defer></script>
+</body>
+</html>

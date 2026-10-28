@@ -31,6 +31,14 @@
                 <p class="question-label">QUESTION {{ loop.index }}{% if question.type == 'sentence_equivalence' %} · SELECT TWO{% endif %}</p>
                 {% if question.passage %}<p class="passage">{{ question.passage }}</p>{% endif %}
                 <h2>{{ question.prompt }}</h2>
+                {% if question.source %}
+                <p class="question-source">
+                    Source: {{ question.source.title }}{% if question.source.section %} · {{ question.source.section }}{% endif %}
+                    {% if question.source.url and (question.source.url.startswith('https://') or question.source.url.startswith('http://')) %}
+                    <a href="{{ question.source.url }}" target="_blank" rel="noopener noreferrer">View source</a>
+                    {% endif %}
+                </p>
+                {% endif %}
                 <form method="post" action="{{ url_for('main.practice') }}#{{ question.question_id }}">
                     <input type="hidden" name="question_id" value="{{ question.question_id }}">
                     <fieldset class="answer-options">
